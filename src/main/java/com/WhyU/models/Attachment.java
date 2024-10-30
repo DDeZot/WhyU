@@ -18,14 +18,13 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 public class Attachment extends BasicPostingModel<User>{
-    @Column(name = "bytes", nullable = false)
-    @Lob
-    private byte[] bytes;
+    @Column(name = "path", nullable = false)
+    private String path;
 
     @Column(name = "file_name", nullable = false)
     @Pattern(regexp = ".*\\.(jpg|png)$", message = "File name must end with '.jpg' or '.png'")
     private String fileName;
 
-    @Column(name = "hash_code", nullable = false)
-    private Integer hashCode;
+    @Column(name = "length", nullable = false)
+    private Long length;
 }

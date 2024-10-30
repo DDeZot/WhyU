@@ -17,7 +17,7 @@ public class AttachmentDTO implements Serializable {
     private LocalDateTime updatedAt;
     private User createdBy;
     private User updatedBy;
-    private byte[] bytes;
+    private String path;
     private String fileName;
-    private Integer hashCode;
+    private Long length;
 }

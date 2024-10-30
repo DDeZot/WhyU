@@ -7,12 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class AttachmentServiceImpl {
+    private final String ATTACHMENT_DIRECTORY = "src/main/resources/uploads";
     private final AttachmentRepository attachmentRepository;
 
     @Autowired
@@ -33,18 +34,32 @@ public class AttachmentServiceImpl {
         }
 
         byte[] fileBytes = file.getBytes();
-        int hashCode = Arrays.hashCode(fileBytes);
-        Attachment existingAttachment = attachmentRepository.findByHashCode(hashCode)
-                .orElse(null);
+        long fileLength = file.getSize();
 
-        if (existingAttachment != null && Arrays.equals(existingAttachment.getBytes(), fileBytes)) {
-            return existingAttachment;
+        List<Attachment> existingAttachments = attachmentRepository.findAllByLength(file.getSize());
+
+        if(!existingAttachments.isEmpty()) {
+            for (Attachment a : existingAttachments) {
+                try(FileInputStream f = new FileInputStream(a.getPath())) {
+                    if (Arrays.equals(f.readAllBytes(), fileBytes)) {
+                        return a;
+                    }
+                } catch (FileNotFoundException e) {
+                    throw new IOException("У файла " + a.getFileName() + " в базе данных неправильно указан путь");
+                }
+            }
         }
 
+        String directoryPath = ATTACHMENT_DIRECTORY + '/' + fileName;
+
+        FileOutputStream newFile = new FileOutputStream(directoryPath);
+        newFile.write(fileBytes);
+        newFile.close();
+
         return attachmentRepository.save(Attachment.builder()
-                .bytes(fileBytes)
+                .path(directoryPath)
                 .fileName(fileName)
-                .hashCode(hashCode)
+                .length(fileLength)
                 .build());
     }
 

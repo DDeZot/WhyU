@@ -27,6 +27,6 @@ public class Action extends BasicModel {
     private Frame frame;
 
     @OneToOne
-    @JoinColumn(name = "consequence_id")
+    @JoinColumn(name = "consequence_id", nullable = false)
     private Frame consequence;
 }

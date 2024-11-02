@@ -44,6 +44,7 @@ public class Frame extends BasicModel {
     @JoinColumn(name = "gate_id")
     private Action gate;
 
+    @Deprecated
     public void addAction(Action action){
         this.actions.add(action);
     }

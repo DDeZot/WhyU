@@ -50,11 +50,14 @@ public class ActionServiceImpl implements ActionService {
                 .head(dto.getHead())
                 .build();
 
-        frame.addAction(action);
+        Frame consequence = Frame.builder().story(frame.getStory()).build();
+        frameRepository.save(consequence);
 
-        Frame consequence = new Frame();
-        consequence.setGate(action);
         action.setConsequence(consequence);
+        actionRepository.save(action);
+
+        consequence.setGate(action);
+        frame.addAction(action);
 
         frameRepository.save(frame);
         frameRepository.save(consequence);

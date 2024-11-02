@@ -19,14 +19,12 @@ import java.util.List;
 @Service
 public class FrameServiceImpl implements FrameService {
     private final FrameRepository frameRepository;
-    private final StoryServiceImpl storyServiceImpl;
     private final StoryRepository storyRepository;
     private final AttachmentServiceImpl attachmentServiceImpl;
 
     @Autowired
-    public FrameServiceImpl(FrameRepository frameRepository, StoryServiceImpl storyServiceImpl, StoryRepository storyRepository, AttachmentServiceImpl attachmentServiceImpl){
+    public FrameServiceImpl(FrameRepository frameRepository, StoryRepository storyRepository, AttachmentServiceImpl attachmentServiceImpl){
         this.frameRepository = frameRepository;
-        this.storyServiceImpl = storyServiceImpl;
         this.storyRepository = storyRepository;
         this.attachmentServiceImpl = attachmentServiceImpl;
     }
@@ -41,7 +39,6 @@ public class FrameServiceImpl implements FrameService {
                 .story(story)
                 .build();
 
-        story.addFrame(frame);
         storyRepository.save(story);
         return frameRepository.save(frame);
     }

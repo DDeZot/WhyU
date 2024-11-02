@@ -46,6 +46,21 @@ public class FrameServiceImpl implements FrameService {
         return frameRepository.save(frame);
     }
 
+    public Frame createFrame(FrameDTO dto, String storyName) {
+        Story story = storyRepository.findStoryByHead(storyName)
+                .orElseThrow(() -> new EntityNotFoundException("История с именем " + storyName + " не найдена"));
+
+        Frame frame = Frame.builder()
+                .head(dto.getHead())
+                .description(dto.getDescription())
+                .story(story)
+                .build();
+
+        story.addFrame(frame);
+        storyRepository.save(story);
+        return frameRepository.save(frame);
+    }
+
     public Frame findFrameById(Long id){
         return frameRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Кадр с ID " + id + " не найден"));
@@ -84,7 +99,7 @@ public class FrameServiceImpl implements FrameService {
         return frameRepository.save(frame);
     }
 
-    public void uploadImageToFrame(Long id, MultipartFile image) throws IOException {
+    public Frame uploadImageToFrame(Long id, MultipartFile image) throws IOException {
         if (id == null) {
             throw new IllegalArgumentException("ID не может быть null");
         }
@@ -99,6 +114,6 @@ public class FrameServiceImpl implements FrameService {
         Attachment attachment = attachmentServiceImpl.createAttachment(image);
 
         frame.setAttachment(attachment);
-        frameRepository.save(frame);
+        return frameRepository.save(frame);
     }
 }

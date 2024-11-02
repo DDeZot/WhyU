@@ -28,8 +28,13 @@ public class ActionServiceImpl implements ActionService {
                 .orElseThrow(() -> new EntityNotFoundException("Действие с id " + id + " не найдено!"));
     }
 
-    public List<Action> findActionsByConsequenceId(Long consequenceID) {
-        return List.of();
+    public Action findActionByConsequenceId(Long consequenceID) {
+        return actionRepository.findByConsequenceId(consequenceID)
+                .orElseThrow(() -> new EntityNotFoundException("Кадр с id " + consequenceID + " не найден!"));
+    }
+
+    public List<Action> findAllActionByFrameId(Long frameID){
+        return actionRepository.findAllByFrameId(frameID);
     }
 
     public List<Action> findAllActions(){
@@ -46,7 +51,13 @@ public class ActionServiceImpl implements ActionService {
                 .build();
 
         frame.addAction(action);
+
+        Frame consequence = new Frame();
+        consequence.setGate(action);
+        action.setConsequence(consequence);
+
         frameRepository.save(frame);
+        frameRepository.save(consequence);
 
         return actionRepository.save(action);
     }
@@ -68,6 +79,6 @@ public class ActionServiceImpl implements ActionService {
     }
 
     public void deleteActionById(Long id) {
-
+        actionRepository.deleteById(id);
     }
 }

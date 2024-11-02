@@ -72,7 +72,7 @@ public class StoryServiceImpl implements StoryService {
         return storyRepository.findAll();
     }
 
-    public void uploadImageToStory(Long id, MultipartFile image) throws IOException {
+    public Story uploadImageToStory(Long id, MultipartFile image) throws IOException {
         if (id == null) {
             throw new IllegalArgumentException("ID не может быть null");
         }
@@ -87,6 +87,6 @@ public class StoryServiceImpl implements StoryService {
         Attachment attachment = attachmentServiceImpl.createAttachment(image);
 
         story.setPreview(attachment);
-        storyRepository.save(story);
+        return storyRepository.save(story);
     }
 }

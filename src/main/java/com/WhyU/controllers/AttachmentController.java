@@ -14,11 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping("api/attachments")
 public class AttachmentController {
-    private final AttachmentServiceImpl attachmentServiceImpl;
+    private final AttachmentServiceImpl attachmentService;
 
     @Autowired
-    public AttachmentController(AttachmentServiceImpl attachmentServiceImpl){
-        this.attachmentServiceImpl = attachmentServiceImpl;
+    public AttachmentController(AttachmentServiceImpl attachmentService){
+        this.attachmentService = attachmentService;
     }
 
     @PostMapping
@@ -27,7 +27,7 @@ public class AttachmentController {
             return ResponseEntity.badRequest().body("Выберите файл для загрузки.");
 
         try {
-            attachmentServiceImpl.createAttachment(file);
+            attachmentService.createAttachment(file);
             return ResponseEntity.ok("Картинка загружена");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка загрузки картинки");
@@ -36,7 +36,7 @@ public class AttachmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Attachment> findAttachmentById(@PathVariable Long id) {
-        Attachment attachment = attachmentServiceImpl.findAttachmentById(id);
+        Attachment attachment = attachmentService.findAttachmentById(id);
 
         if (attachment == null) {
             return ResponseEntity.notFound().build();
@@ -47,6 +47,6 @@ public class AttachmentController {
 
     @GetMapping()
     public ResponseEntity<List<Attachment>> findAllAttachments(){
-        return ResponseEntity.status(HttpStatus.OK).body(attachmentServiceImpl.findAllAttachments());
+        return ResponseEntity.status(HttpStatus.OK).body(attachmentService.findAllAttachments());
     }
 }

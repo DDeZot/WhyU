@@ -31,7 +31,7 @@ public class Story extends BasicPostingModel<User> {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Attachment preview;
 
-    @OneToMany(mappedBy = "story")
+    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
     private List<Frame> frames;
 
     public void addFrame(Frame frame){

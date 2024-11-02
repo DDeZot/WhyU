@@ -26,7 +26,7 @@ public class Frame extends BasicModel {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "story_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Story story;
@@ -36,7 +36,8 @@ public class Frame extends BasicModel {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Attachment attachment;
 
-    @OneToMany(mappedBy = "frame")
+    @OneToMany(mappedBy = "frame", cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Action> actions;
 
     @OneToOne

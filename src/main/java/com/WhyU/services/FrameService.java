@@ -13,7 +13,8 @@ public interface FrameService {
     public Frame findFrameByGateId(Long gateID);
     public List<Frame> findAllFrames();
     public Frame createFrame(FrameDTO dto, Long storyID);
+    public Frame createFrame(FrameDTO dto, String storyName);
     public Frame updateFrame(Long id, FrameDTO dto);
     public void deleteById(Long id);
-    public void uploadImageToFrame(Long id, MultipartFile image) throws IOException;
+    public Frame uploadImageToFrame(Long id, MultipartFile image) throws IOException;
 }

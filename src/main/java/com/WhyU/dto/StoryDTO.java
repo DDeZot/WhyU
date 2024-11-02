@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StoryDTO implements Serializable {
+public class StoryDTO implements AbstractDTO {
     private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

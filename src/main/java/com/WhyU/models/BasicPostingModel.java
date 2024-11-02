@@ -1,5 +1,6 @@
 package com.WhyU.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,11 +23,13 @@ import java.time.LocalDateTime;
 @SuperBuilder(builderMethodName = "basicPostingModelBuilder")
 public class BasicPostingModel<U> extends BasicModel {
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column(updatable = false)
     @CreatedBy
     private U createdBy;
 

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AttachmentDTO implements Serializable {
+public class AttachmentDTO implements AbstractDTO {
     private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -36,6 +36,11 @@ public class StoryServiceImpl implements StoryService {
                 .build());
     }
 
+    public Story createStory(Story story){
+        if(story != null)
+            return storyRepository.save(story);
+        return null;
+    }
     public Story updateStory(Long id, StoryDTO dto) {
         Story story = storyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("История с ID " + id + " не найдена"));
@@ -52,6 +57,12 @@ public class StoryServiceImpl implements StoryService {
         story.setUpdatedAt(LocalDateTime.now());
 
         return storyRepository.save(story);
+    }
+
+    public Story updateStory(Story story){
+        if(story != null)
+            return storyRepository.save(story);
+        return null;
     }
 
     public void deleteStoryById(Long id){
@@ -72,7 +83,7 @@ public class StoryServiceImpl implements StoryService {
         return storyRepository.findAll();
     }
 
-    public void uploadImageToStory(Long id, MultipartFile image) throws IOException {
+    public Story uploadImageToStory(Long id, MultipartFile image) throws IOException {
         if (id == null) {
             throw new IllegalArgumentException("ID не может быть null");
         }
@@ -87,6 +98,6 @@ public class StoryServiceImpl implements StoryService {
         Attachment attachment = attachmentServiceImpl.createAttachment(image);
 
         story.setPreview(attachment);
-        storyRepository.save(story);
+        return storyRepository.save(story);
     }
 }

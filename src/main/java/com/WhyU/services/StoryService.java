@@ -14,5 +14,5 @@ public interface StoryService {
     public Story findStoryById(Long id);
     public Story findStoryByHead(String head);
     public List<Story> findAllStories();
-    public void uploadImageToStory(Long id, MultipartFile image) throws IOException;
+    public Story uploadImageToStory(Long id, MultipartFile image) throws IOException;
 }

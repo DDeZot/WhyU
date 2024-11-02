@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDTO implements Serializable {
+public class UserDTO implements AbstractDTO {
     Long id;
     private String username;
     private LocalDate regDate;

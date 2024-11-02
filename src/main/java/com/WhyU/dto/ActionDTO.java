@@ -10,7 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ActionDTO implements Serializable {
+public class ActionDTO implements AbstractDTO {
     Long id;
     private String head;
     private Frame frame;

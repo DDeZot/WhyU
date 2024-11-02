@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FrameDTO implements Serializable {
+public class FrameDTO implements AbstractDTO {
     private Long id;
     private String head;
     private String description;

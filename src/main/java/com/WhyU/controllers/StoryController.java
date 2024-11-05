@@ -1,11 +1,14 @@
 package com.WhyU.controllers;
 
+import com.WhyU.dto.FrameDTO;
 import com.WhyU.dto.StoryDTO;
+import com.WhyU.models.Frame;
 import com.WhyU.models.Story;
 import com.WhyU.services.impl.AttachmentServiceImpl;
 import com.WhyU.services.impl.StoryServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,30 +28,22 @@ public class StoryController {
 
     @PostMapping
     public ResponseEntity<Story> createStory(@RequestBody StoryDTO dto){
-        try {
             return ResponseEntity.ok().body(storyService.createStory(dto));
-        } catch (EntityNotFoundException e){
-            return ResponseEntity.notFound().build();
+    }
 
-        }
+    @PostMapping("/{id}/frames")
+    public ResponseEntity<Frame> addFrame(@PathVariable Long id, @RequestBody FrameDTO dto) throws EntityNotFoundException {
+        return ResponseEntity.ok().body(storyService.addFrame(id, dto));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Story> findStoryById(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok().body(storyService.findStoryById(id));
-        } catch (EntityNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok().body(storyService.findStoryById(id));
     }
 
-    @GetMapping("/find_by_head/{head}")
+    @GetMapping("/by_head/{head}")
     public ResponseEntity<Story> findStoryByHead(@PathVariable String head){
-        try {
-            return ResponseEntity.ok().body(storyService.findStoryByHead(head));
-        } catch (EntityNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok().body(storyService.findStoryByHead(head));
     }
 
     @GetMapping
@@ -56,28 +51,35 @@ public class StoryController {
         return storyService.findAllStories();
     }
 
+    @GetMapping("{id}/start")
+    public ResponseEntity<Frame> getFirstFrame(@PathVariable Long id) throws EntityNotFoundException{
+        return ResponseEntity.ok().body(storyService.getFirstFrame(id));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Story> updateStory(@PathVariable Long id, @RequestBody StoryDTO dto){
-        try{
             return ResponseEntity.ok().body(storyService.updateStory(id, dto));
-        } catch (EntityNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @PatchMapping("/upload/{id}")
     public ResponseEntity<Story> addPreview(@PathVariable Long id, @RequestParam("file")MultipartFile file) throws IOException {
-        try {
             return ResponseEntity.ok().body(storyService.uploadImageToStory(id, file));
-        } catch (EntityNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteStory(@PathVariable Long id) {
         storyService.deleteStoryById(id);
         return ResponseEntity.ok().body("История с id " + id + " успешно удалена.");
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleNotFound(EntityNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> handleNotFound(IOException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }
 

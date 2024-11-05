@@ -1,8 +1,11 @@
 package com.WhyU.services.impl;
 
+import com.WhyU.dto.FrameDTO;
 import com.WhyU.dto.StoryDTO;
 import com.WhyU.models.Attachment;
+import com.WhyU.models.Frame;
 import com.WhyU.models.Story;
+import com.WhyU.repositories.FrameRepository;
 import com.WhyU.repositories.StoryRepository;
 import com.WhyU.services.StoryService;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,11 +21,13 @@ import java.util.List;
 public class StoryServiceImpl implements StoryService {
     private final AttachmentServiceImpl attachmentServiceImpl;
     private final StoryRepository storyRepository;
+    private final FrameRepository frameRepository;
 
     @Autowired
-    public StoryServiceImpl(StoryRepository storyRepository, AttachmentServiceImpl attachmentServiceImpl){
+    public StoryServiceImpl(StoryRepository storyRepository, AttachmentServiceImpl attachmentServiceImpl, FrameRepository frameRepository){
         this.storyRepository = storyRepository;
         this.attachmentServiceImpl = attachmentServiceImpl;
+        this.frameRepository = frameRepository;
     }
 
     public Story createStory(StoryDTO dto){
@@ -70,6 +75,34 @@ public class StoryServiceImpl implements StoryService {
 
     public List<Story> findAllStories(){
         return storyRepository.findAll();
+    }
+
+    public Frame getFirstFrame(Long storyID) {
+        return storyRepository.findById(storyID)
+                .orElseThrow(() -> new EntityNotFoundException("История с id " + storyID + " не найдена"))
+                .getFrames().get(0);
+    }
+
+    public Frame addFrame(Long storyID, FrameDTO dto) {
+        Story story = storyRepository.findById(storyID)
+                .orElseThrow(() -> new EntityNotFoundException("История с id " + storyID + " не найдена"));
+
+        Frame frame = Frame.builder()
+                        .head(dto.getHead())
+                        .description(dto.getDescription())
+                        .story(story)
+                        .build();
+
+        return frameRepository.save(frame);
+    }
+
+    public Frame addFrame(Long storyID, Frame frame) {
+        Story story = storyRepository.findById(storyID)
+                .orElseThrow(() -> new EntityNotFoundException("История с id " + storyID + " не найдена"));
+
+        frame.setStory(story);
+
+        return frameRepository.save(frame);
     }
 
     public Story uploadImageToStory(Long id, MultipartFile image) throws IOException {

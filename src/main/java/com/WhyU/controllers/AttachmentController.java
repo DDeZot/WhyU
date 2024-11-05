@@ -2,6 +2,7 @@ package com.WhyU.controllers;
 
 import com.WhyU.models.Attachment;
 import com.WhyU.services.impl.AttachmentServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,20 +23,12 @@ public class AttachmentController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createAttachment(@RequestParam("file") MultipartFile file)  {
-        if (file.isEmpty())
-            return ResponseEntity.badRequest().body("Выберите файл для загрузки.");
-
-        try {
-            attachmentService.createAttachment(file);
-            return ResponseEntity.ok("Картинка загружена");
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка загрузки картинки");
-        }
+    public ResponseEntity<Attachment> createAttachment(@RequestParam("file") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(attachmentService.createAttachment(file));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Attachment> findAttachmentById(@PathVariable Long id) {
+    public ResponseEntity<Attachment> findAttachmentById(@PathVariable Long id) throws EntityNotFoundException{
         Attachment attachment = attachmentService.findAttachmentById(id);
 
         if (attachment == null) {
@@ -48,5 +41,15 @@ public class AttachmentController {
     @GetMapping()
     public ResponseEntity<List<Attachment>> findAllAttachments(){
         return ResponseEntity.status(HttpStatus.OK).body(attachmentService.findAllAttachments());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleNotFound(EntityNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> handleNotFound(IOException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

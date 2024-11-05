@@ -1,8 +1,8 @@
 package com.WhyU.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.WhyU.models.enums.Sex;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -24,7 +26,37 @@ public class User extends BasicModel {
     @Column(name = "username", columnDefinition = "varchar(60)", nullable = false)
     private String username;
 
+    @Column(name = "password")
+    private String password;
+
     @Column(name = "reg_date")
     @CreationTimestamp
     private LocalDate regDate;
+
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "sex")
+    private Sex sex;
+
+    @Email
+    @Column(name = "email")
+    protected String email;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_pic_id")
+    private Attachment profilePic;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<Result> results;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Role> roles;
+
+    @Transient
+    private int getAge(){
+        LocalDate currentDate = LocalDate.now();
+        return Period.between(birthDate, currentDate).getYears();
+    }
 }

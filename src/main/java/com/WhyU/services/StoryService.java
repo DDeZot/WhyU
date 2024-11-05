@@ -1,6 +1,8 @@
 package com.WhyU.services;
 
+import com.WhyU.dto.FrameDTO;
 import com.WhyU.dto.StoryDTO;
+import com.WhyU.models.Frame;
 import com.WhyU.models.Story;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,5 +16,8 @@ public interface StoryService {
     public Story findStoryById(Long id);
     public Story findStoryByHead(String head);
     public List<Story> findAllStories();
+    public Frame getFirstFrame(Long storyID);
+    public Frame addFrame(Long storyID, FrameDTO dto);
+    public Frame addFrame(Long storyID, Frame frame);
     public Story uploadImageToStory(Long id, MultipartFile image) throws IOException;
 }

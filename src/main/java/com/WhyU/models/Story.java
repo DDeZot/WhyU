@@ -26,7 +26,7 @@ public class Story extends BasicPostingModel<User> {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prewiev_id")
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Attachment preview;
@@ -34,6 +34,7 @@ public class Story extends BasicPostingModel<User> {
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
     private List<Frame> frames;
 
+    @Deprecated
     public void addFrame(Frame frame){
         this.frames.add(frame);
     }

@@ -57,7 +57,6 @@ public class ActionServiceImpl implements ActionService {
         actionRepository.save(action);
 
         consequence.setGate(action);
-        frame.addAction(action);
 
         frameRepository.save(frame);
         frameRepository.save(consequence);

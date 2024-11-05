@@ -21,12 +21,12 @@ public class Action extends BasicModel {
     @Column(name = "head", columnDefinition = "varchar(100)")
     private String head;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "frame_id")
     private Frame frame;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "consequence_id", nullable = false)
     private Frame consequence;
 }

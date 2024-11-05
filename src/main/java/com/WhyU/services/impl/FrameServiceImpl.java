@@ -1,9 +1,13 @@
 package com.WhyU.services.impl;
 
+import com.WhyU.dto.ActionDTO;
 import com.WhyU.dto.FrameDTO;
+import com.WhyU.models.Action;
 import com.WhyU.models.Attachment;
 import com.WhyU.models.Frame;
 import com.WhyU.models.Story;
+import com.WhyU.models.enums.EndingType;
+import com.WhyU.repositories.ActionRepository;
 import com.WhyU.repositories.FrameRepository;
 import com.WhyU.repositories.StoryRepository;
 import com.WhyU.services.FrameService;
@@ -21,12 +25,14 @@ public class FrameServiceImpl implements FrameService {
     private final FrameRepository frameRepository;
     private final StoryRepository storyRepository;
     private final AttachmentServiceImpl attachmentServiceImpl;
+    private final ActionRepository actionRepository;
 
     @Autowired
-    public FrameServiceImpl(FrameRepository frameRepository, StoryRepository storyRepository, AttachmentServiceImpl attachmentServiceImpl){
+    public FrameServiceImpl(FrameRepository frameRepository, StoryRepository storyRepository, AttachmentServiceImpl attachmentServiceImpl, ActionRepository actionRepository){
         this.frameRepository = frameRepository;
         this.storyRepository = storyRepository;
         this.attachmentServiceImpl = attachmentServiceImpl;
+        this.actionRepository = actionRepository;
     }
 
     public Frame createFrame(FrameDTO dto, Long storyID){
@@ -75,6 +81,53 @@ public class FrameServiceImpl implements FrameService {
         frameRepository.deleteById(id);
     }
 
+    public Action addAction(Long frameID, ActionDTO dto) {
+        Frame frame = frameRepository.findById(frameID)
+                .orElseThrow(() -> new EntityNotFoundException("Кадр с id " + frameID + " не найден!"));
+
+        frame.setEnding(false);
+        frame.setEndingType(null);
+
+        Action action = Action.builder()
+                .frame(frame)
+                .head(dto.getHead())
+                .build();
+
+        Frame consequence = Frame.builder().story(frame.getStory()).build();
+        frameRepository.save(consequence);
+
+        action.setConsequence(consequence);
+        actionRepository.save(action);
+
+        consequence.setGate(action);
+
+        frameRepository.save(frame);
+        frameRepository.save(consequence);
+
+        return actionRepository.save(action);
+    }
+
+    public Action addAction(Long frameID, Action action) {
+        Frame frame = frameRepository.findById(frameID)
+                .orElseThrow(() -> new EntityNotFoundException("Кадр с id " + frameID + " не найден!"));
+
+        frame.setEnding(false);
+        frame.setEndingType(null);
+
+        Frame consequence = Frame.builder().story(frame.getStory()).build();
+        frameRepository.save(consequence);
+
+        action.setConsequence(consequence);
+        actionRepository.save(action);
+
+        consequence.setGate(action);
+
+        frameRepository.save(frame);
+        frameRepository.save(consequence);
+
+        return actionRepository.save(action);
+    }
+
     public Frame updateFrame(Long id, FrameDTO dto){
         Frame frame = frameRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Кадр с ID " + id + " не найден"))  ;
@@ -93,6 +146,14 @@ public class FrameServiceImpl implements FrameService {
 
         storyRepository.save(story);
 
+        return frameRepository.save(frame);
+    }
+
+    public Frame setEnding(Long id, EndingType endingType) {
+        Frame frame = frameRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Кадр с id " + id + " не найден"));
+
+        frame.setEndingType(endingType);
         return frameRepository.save(frame);
     }
 

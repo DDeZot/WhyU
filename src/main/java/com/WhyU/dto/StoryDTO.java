@@ -13,12 +13,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class StoryDTO implements Serializable {
-    private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
     private User createdBy;
+    private long createdByUserID;
+
     private User updatedBy;
+    private long updatedByUserID;
+
     private String head;
     private String description;
+
     private Attachment preview;
+    private long previewAttachmentID;
 }

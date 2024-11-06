@@ -41,9 +41,8 @@ public class Frame extends BasicModel {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Action> actions;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gate_id")
-    private Action gate;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "consequence")
+    private List<Action> gates;
 
     @Column(name = "ending")
     private Boolean ending = false;

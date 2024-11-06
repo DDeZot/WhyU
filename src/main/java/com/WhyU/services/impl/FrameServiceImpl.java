@@ -26,13 +26,15 @@ public class FrameServiceImpl implements FrameService {
     private final StoryRepository storyRepository;
     private final AttachmentServiceImpl attachmentServiceImpl;
     private final ActionRepository actionRepository;
+    private final StoryServiceImpl storyService;
 
     @Autowired
-    public FrameServiceImpl(FrameRepository frameRepository, StoryRepository storyRepository, AttachmentServiceImpl attachmentServiceImpl, ActionRepository actionRepository){
+    public FrameServiceImpl(FrameRepository frameRepository, StoryRepository storyRepository, AttachmentServiceImpl attachmentServiceImpl, ActionRepository actionRepository, StoryServiceImpl storyService){
         this.frameRepository = frameRepository;
         this.storyRepository = storyRepository;
         this.attachmentServiceImpl = attachmentServiceImpl;
         this.actionRepository = actionRepository;
+        this.storyService = storyService;
     }
 
     public Frame createFrame(FrameDTO dto, Long storyID){
@@ -49,9 +51,17 @@ public class FrameServiceImpl implements FrameService {
         return frameRepository.save(frame);
     }
 
+    public Frame findFrameById(Long id){
+        return frameRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Кадр с ID " + id + " не найден"));
+    }
+
+    public List<Frame> findAllFrames(){
+        return frameRepository.findAll();
+    }
+
     public Frame createFrame(FrameDTO dto, String storyName) {
-        Story story = storyRepository.findStoryByHead(storyName)
-                .orElseThrow(() -> new EntityNotFoundException("История с именем " + storyName + " не найдена"));
+        Story story = storyService.findStoryByHead(storyName);
 
         Frame frame = Frame.builder()
                 .head(dto.getHead())
@@ -59,22 +69,7 @@ public class FrameServiceImpl implements FrameService {
                 .story(story)
                 .build();
 
-        story.addFrame(frame);
-        storyRepository.save(story);
         return frameRepository.save(frame);
-    }
-
-    public Frame findFrameById(Long id){
-        return frameRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Кадр с ID " + id + " не найден"));
-    }
-
-    public Frame findFrameByGateId(Long gateID) {
-        return null;
-    }
-
-    public List<Frame> findAllFrames(){
-        return frameRepository.findAll();
     }
 
     public void deleteById(Long id){
@@ -82,8 +77,7 @@ public class FrameServiceImpl implements FrameService {
     }
 
     public Action addAction(Long frameID, ActionDTO dto) {
-        Frame frame = frameRepository.findById(frameID)
-                .orElseThrow(() -> new EntityNotFoundException("Кадр с id " + frameID + " не найден!"));
+        Frame frame = findFrameById(frameID);
 
         frame.setEnding(false);
         frame.setEndingType(null);
@@ -99,29 +93,6 @@ public class FrameServiceImpl implements FrameService {
         action.setConsequence(consequence);
         actionRepository.save(action);
 
-        consequence.setGate(action);
-
-        frameRepository.save(frame);
-        frameRepository.save(consequence);
-
-        return actionRepository.save(action);
-    }
-
-    public Action addAction(Long frameID, Action action) {
-        Frame frame = frameRepository.findById(frameID)
-                .orElseThrow(() -> new EntityNotFoundException("Кадр с id " + frameID + " не найден!"));
-
-        frame.setEnding(false);
-        frame.setEndingType(null);
-
-        Frame consequence = Frame.builder().story(frame.getStory()).build();
-        frameRepository.save(consequence);
-
-        action.setConsequence(consequence);
-        actionRepository.save(action);
-
-        consequence.setGate(action);
-
         frameRepository.save(frame);
         frameRepository.save(consequence);
 
@@ -129,8 +100,7 @@ public class FrameServiceImpl implements FrameService {
     }
 
     public Frame updateFrame(Long id, FrameDTO dto){
-        Frame frame = frameRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Кадр с ID " + id + " не найден"))  ;
+        Frame frame = findFrameById(id);
 
         if(dto.getHead() != null)
             frame.setHead(dto.getHead());
@@ -150,11 +120,16 @@ public class FrameServiceImpl implements FrameService {
     }
 
     public Frame setEnding(Long id, EndingType endingType) {
-        Frame frame = frameRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Кадр с id " + id + " не найден"));
+        Frame frame = findFrameById(id);
 
         frame.setEndingType(endingType);
         return frameRepository.save(frame);
+    }
+
+    public List<Action> getAllActions(Long id){
+        Frame frame = findFrameById(id);
+
+        return frame.getActions();
     }
 
     public Frame uploadImageToFrame(Long id, MultipartFile image) throws IOException {

@@ -48,7 +48,6 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         else {
-            selectedUser.setId(dto.getId() == null ? selectedUser.getId() : dto.getId());
             selectedUser.setUsername(dto.getUsername() == null ? selectedUser.getUsername() : dto.getUsername());
             selectedUser.setRegDate(dto.getRegDate() == null ? selectedUser.getRegDate() : dto.getRegDate());
 

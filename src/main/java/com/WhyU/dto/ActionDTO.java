@@ -11,8 +11,11 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class ActionDTO implements Serializable {
-    Long id;
     private String head;
+
     private Frame frame;
+    private long frameID;
+
     private Frame consequence;
+    private long consequenceFrameID;
 }

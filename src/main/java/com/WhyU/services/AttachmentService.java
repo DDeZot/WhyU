@@ -9,11 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface AttachmentService {
-    public Attachment createAttachment(MultipartFile file) throws IOException;
-
-    public List<Attachment> findAllAttachments();
-
-    public Attachment findAttachmentById(Long id);
-
-    public void deleteAttachmentById(Long id);
+    Attachment createAttachment(MultipartFile file) throws IOException;
+    List<Attachment> findAllAttachments();
+    Attachment findAttachmentById(Long id);
+    void deleteAttachmentById(Long id);
 }

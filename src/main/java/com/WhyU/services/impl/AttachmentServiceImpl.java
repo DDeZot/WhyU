@@ -21,6 +21,15 @@ public class AttachmentServiceImpl {
         this.attachmentRepository = attachmentRepository;
     }
 
+    public List<Attachment> findAllAttachments(){
+        return attachmentRepository.findAll();
+    }
+
+    public Attachment findAttachmentById(Long id){
+        return attachmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Вложение с ID " + id + " не найдено"));
+    }
+
     public Attachment createAttachment(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new IOException("Файл пустой!");
@@ -61,15 +70,6 @@ public class AttachmentServiceImpl {
                 .fileName(fileName)
                 .length(fileLength)
                 .build());
-    }
-
-    public List<Attachment> findAllAttachments(){
-        return attachmentRepository.findAll();
-    }
-
-    public Attachment findAttachmentById(Long id){
-        return attachmentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Вложение с ID " + id + " не найдено"));
     }
 
     public void deleteAttachmentById(Long id){

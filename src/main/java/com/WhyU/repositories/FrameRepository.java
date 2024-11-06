@@ -10,7 +10,4 @@ import java.util.Optional;
 
 @Repository
 public interface FrameRepository extends JpaRepository<Frame, Long> {
-    @Query("SELECT f FROM Frame f WHERE f.gate.id = :gateId")
-    @Transactional(readOnly = true)
-    public  Optional<Frame> findByGate(Long gateId);
 }

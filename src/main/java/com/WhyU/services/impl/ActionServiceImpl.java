@@ -16,11 +16,13 @@ import java.util.List;
 public class ActionServiceImpl implements ActionService {
     private final ActionRepository actionRepository;
     private final FrameRepository frameRepository;
+    private final FrameServiceImpl frameService;
 
     @Autowired
-    public ActionServiceImpl(ActionRepository actionRepository, FrameRepository frameRepository){
+    public ActionServiceImpl(ActionRepository actionRepository, FrameRepository frameRepository, FrameServiceImpl frameService){
         this.actionRepository = actionRepository;
         this.frameRepository = frameRepository;
+        this.frameService = frameService;
     }
 
     public Action findActionById(Long id){
@@ -28,13 +30,8 @@ public class ActionServiceImpl implements ActionService {
                 .orElseThrow(() -> new EntityNotFoundException("Действие с id " + id + " не найдено!"));
     }
 
-    public Action findActionByConsequenceId(Long consequenceID) {
-        return actionRepository.findByConsequenceId(consequenceID)
-                .orElseThrow(() -> new EntityNotFoundException("Кадр с id " + consequenceID + " не найден!"));
-    }
-
-    public List<Action> findAllActionByFrameId(Long frameID){
-        return actionRepository.findAllByFrameId(frameID);
+    public List<Action> findAllActionsByConsequenceId(Long consequenceID) {
+        return actionRepository.findByConsequenceId(consequenceID);
     }
 
     public List<Action> findAllActions(){
@@ -42,8 +39,7 @@ public class ActionServiceImpl implements ActionService {
     }
 
     public Action createAction(ActionDTO dto, Long frameID){
-        Frame frame = frameRepository.findById(frameID)
-                .orElseThrow(() -> new EntityNotFoundException("Кадр с id " + frameID + " не найден!"));
+        Frame frame = frameService.findFrameById(frameID);
 
         Action action = Action.builder()
                 .frame(frame)
@@ -56,8 +52,6 @@ public class ActionServiceImpl implements ActionService {
         action.setConsequence(consequence);
         actionRepository.save(action);
 
-        consequence.setGate(action);
-
         frameRepository.save(frame);
         frameRepository.save(consequence);
 
@@ -65,8 +59,7 @@ public class ActionServiceImpl implements ActionService {
     }
 
     public Action updateAction(Long id, ActionDTO dto){
-        Action action = actionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Действие с id " + id + " не найдено!"));
+        Action action = findActionById(id);
 
         if(dto.getHead() != null)
             action.setHead(dto.getHead());
@@ -78,6 +71,12 @@ public class ActionServiceImpl implements ActionService {
             action.setConsequence(dto.getConsequence());
 
         return actionRepository.save(action);
+    }
+
+    public Frame getConsequence(Long id) {
+        Action action = findActionById(id);
+
+        return action.getConsequence();
     }
 
     public void deleteActionById(Long id) {

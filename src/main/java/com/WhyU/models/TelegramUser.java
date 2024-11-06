@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @Setter
-public class TelegramUsers {
+public class TelegramUser {
     @Id
     @Column(name = "tg_id")
     Long telegramID;

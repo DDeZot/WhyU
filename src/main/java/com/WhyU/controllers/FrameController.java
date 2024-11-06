@@ -45,9 +45,9 @@ public class FrameController {
         return ResponseEntity.ok().body(frameService.findFrameById(id));
     }
 
-    @GetMapping("/by_gate/{gateID}")
-    public ResponseEntity<Frame> findFrameByGate(@PathVariable Long gateID) throws EntityNotFoundException {
-        return ResponseEntity.ok().body(frameService.findFrameByGateId(gateID));
+    @GetMapping("/{id}/actions")
+    public List<Action> getAllActions(@PathVariable Long id) {
+        return frameService.getAllActions(id);
     }
 
     @GetMapping

@@ -2,6 +2,7 @@ package com.WhyU.controllers;
 
 import com.WhyU.dto.ActionDTO;
 import com.WhyU.models.Action;
+import com.WhyU.models.Frame;
 import com.WhyU.services.impl.ActionServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -36,14 +37,16 @@ public class ActionController {
     }
 
     @GetMapping("/by_consequence_id/{consequenceID}")
-    public ResponseEntity<Action> findActionByConsequenceId(@PathVariable Long consequenceID) throws EntityNotFoundException {
-        return ResponseEntity.ok().body(actionService.findActionByConsequenceId(consequenceID));
+    public List<Action> findActionsByConsequenceId(@PathVariable Long consequenceID) throws EntityNotFoundException {
+        return actionService.findAllActionsByConsequenceId(consequenceID);
     }
 
-    @GetMapping("/by_frame_id/{frameID}")
-    public List<Action> findAllActionsByFrameId(@PathVariable Long frameID) {
-        return actionService.findAllActionByFrameId(frameID);
+
+    @GetMapping("/{id}/consequence")
+    public ResponseEntity<Frame> getConsequence(@PathVariable Long id) throws EntityNotFoundException {
+        return ResponseEntity.ok().body(actionService.getConsequence(id));
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Action> updateAction(@PathVariable Long id, @RequestBody ActionDTO dto) throws EntityNotFoundException {

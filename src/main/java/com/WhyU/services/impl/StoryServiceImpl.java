@@ -30,6 +30,20 @@ public class StoryServiceImpl implements StoryService {
         this.frameRepository = frameRepository;
     }
 
+    public Story findStoryById(Long id){
+        return storyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("История с ID " + id + " не найдена"));
+    }
+
+    public Story findStoryByHead(String head){
+        return storyRepository.findStoryByHead(head)
+                .orElseThrow(() -> new EntityNotFoundException("История с именем " + head + " не найдена"));
+    }
+
+    public List<Story> findAllStories(){
+        return storyRepository.findAll();
+    }
+
     public Story createStory(StoryDTO dto){
         if(storyRepository.findStoryByHead(dto.getHead()).isPresent()){
             return null;
@@ -42,8 +56,7 @@ public class StoryServiceImpl implements StoryService {
     }
 
     public Story updateStory(Long id, StoryDTO dto) {
-        Story story = storyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("История с ID " + id + " не найдена"));
+        Story story = findStoryById(id);
 
         if (dto.getHead() != null)
             story.setHead(dto.getHead());
@@ -63,29 +76,12 @@ public class StoryServiceImpl implements StoryService {
         storyRepository.deleteById(id);
     }
 
-    public Story findStoryById(Long id){
-        return storyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("История с ID " + id + " не найдена"));
-    }
-
-    public Story findStoryByHead(String head){
-        return storyRepository.findStoryByHead(head)
-                .orElseThrow(() -> new EntityNotFoundException("История с именем " + head + " не найдена"));
-    }
-
-    public List<Story> findAllStories(){
-        return storyRepository.findAll();
-    }
-
     public Frame getFirstFrame(Long storyID) {
-        return storyRepository.findById(storyID)
-                .orElseThrow(() -> new EntityNotFoundException("История с id " + storyID + " не найдена"))
-                .getFrames().get(0);
+        return findStoryById(storyID).getFrames().get(0);
     }
 
     public Frame addFrame(Long storyID, FrameDTO dto) {
-        Story story = storyRepository.findById(storyID)
-                .orElseThrow(() -> new EntityNotFoundException("История с id " + storyID + " не найдена"));
+        Story story = findStoryById(storyID);
 
         Frame frame = Frame.builder()
                         .head(dto.getHead())
@@ -97,9 +93,7 @@ public class StoryServiceImpl implements StoryService {
     }
 
     public Frame addFrame(Long storyID, Frame frame) {
-        Story story = storyRepository.findById(storyID)
-                .orElseThrow(() -> new EntityNotFoundException("История с id " + storyID + " не найдена"));
-
+        Story story = findStoryById(storyID);
         frame.setStory(story);
 
         return frameRepository.save(frame);

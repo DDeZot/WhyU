@@ -12,12 +12,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class AttachmentDTO implements Serializable {
-    private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private User createdBy;
     private User updatedBy;
     private String path;
     private String fileName;
-    private Long length;
+    private long length;
 }

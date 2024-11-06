@@ -10,14 +10,14 @@ import java.io.IOException;
 import java.util.List;
 
 public interface StoryService {
-    public Story createStory(StoryDTO dto);
-    public Story updateStory(Long id, StoryDTO dto);
-    public void deleteStoryById(Long id);
-    public Story findStoryById(Long id);
-    public Story findStoryByHead(String head);
-    public List<Story> findAllStories();
-    public Frame getFirstFrame(Long storyID);
-    public Frame addFrame(Long storyID, FrameDTO dto);
-    public Frame addFrame(Long storyID, Frame frame);
-    public Story uploadImageToStory(Long id, MultipartFile image) throws IOException;
+    Story createStory(StoryDTO dto);
+    Story updateStory(Long id, StoryDTO dto);
+    void deleteStoryById(Long id);
+    Story findStoryById(Long id);
+    Story findStoryByHead(String head);
+    List<Story> findAllStories();
+    Frame getFirstFrame(Long storyID);
+    Frame addFrame(Long storyID, FrameDTO dto);
+    Frame addFrame(Long storyID, Frame frame);
+    Story uploadImageToStory(Long id, MultipartFile image) throws IOException;
 }

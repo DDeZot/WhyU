@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface StoryRepository extends JpaRepository<Story, Long> {
     @Transactional(readOnly = true)
-    public Optional<Story> findStoryByHead(String head);
+    Optional<Story> findStoryByHead(String head);
 }

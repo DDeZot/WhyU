@@ -14,9 +14,9 @@ import java.util.Optional;
 public interface ActionRepository extends JpaRepository<Action, Long> {
     @Transactional(readOnly = true)
     @Query("SELECT a FROM Action a WHERE a.frame.id = :frameID")
-    public List<Action> findAllByFrameId(Long frameID);
+    List<Action> findAllByFrameId(Long frameID);
 
     @Transactional(readOnly = true)
     @Query("SELECT a FROM Action a WHERE a.consequence.id = :consequenceID")
-    public Optional<Action> findByConsequenceId(Long consequenceID);
+    List<Action> findByConsequenceId(Long consequenceID);
 }

@@ -26,7 +26,7 @@ public class Action extends BasicModel {
     @JoinColumn(name = "frame_id")
     private Frame frame;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "consequence_id", nullable = false)
     private Frame consequence;
 }

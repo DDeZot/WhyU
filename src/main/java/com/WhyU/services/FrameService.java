@@ -13,7 +13,6 @@ import java.util.List;
 
 public interface FrameService {
     public Frame findFrameById(Long id);
-    public Frame findFrameByGateId(Long gateID);
     public List<Frame> findAllFrames();
     public Frame createFrame(FrameDTO dto, Long storyID);
     public Frame createFrame(FrameDTO dto, String storyName);
@@ -21,6 +20,6 @@ public interface FrameService {
     public Frame setEnding(Long id, EndingType endingType);
     public void deleteById(Long id);
     public Action addAction(Long frameID, ActionDTO dto);
-    public Action addAction(Long frameID, Action action);
+    public List<Action> getAllActions(Long id);
     public Frame uploadImageToFrame(Long id, MultipartFile image) throws IOException;
 }

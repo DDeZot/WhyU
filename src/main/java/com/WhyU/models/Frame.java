@@ -1,5 +1,6 @@
 package com.WhyU.models;
 
+import com.WhyU.dto.FrameDTO;
 import com.WhyU.models.enums.EndingType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,9 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 @Entity
@@ -54,5 +58,19 @@ public class Frame extends BasicModel {
     @Deprecated
     public void addAction(Action action){
         this.actions.add(action);
+    }
+
+    public FrameDTO getDTO() throws IOException {
+        return FrameDTO.builder()
+                .storyID(story.getId())
+                .attachmentBytes(new FileInputStream(attachment.getPath()).readAllBytes())
+                .attachmentID(attachment.getId())
+                .ending(ending)
+                .actionsIds((Long[]) actions.stream().map(BasicModel::getId).toArray())
+                .gatesIds((Long[]) gates.stream().map(BasicModel::getId).toArray())
+                .head(head)
+                .description(description)
+                .endingType(endingType)
+                .build();
     }
 }

@@ -4,7 +4,6 @@ import com.WhyU.dto.ActionDTO;
 import com.WhyU.dto.FrameDTO;
 import com.WhyU.models.Action;
 import com.WhyU.models.Frame;
-import com.WhyU.models.Story;
 import com.WhyU.models.enums.EndingType;
 import org.springframework.web.multipart.MultipartFile;
 

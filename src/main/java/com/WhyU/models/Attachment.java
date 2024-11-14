@@ -1,5 +1,6 @@
 package com.WhyU.models;
 
+import com.WhyU.dto.AttachmentDTO;
 import jakarta.persistence.*;
 import jakarta.validation.Constraint;
 import jakarta.validation.constraints.Pattern;
@@ -9,8 +10,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 @Entity
-@Table(name = "attachments")//, indexes = @Index(columnList = "hash_code"))
+@Table(name = "attachments")
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,4 +32,16 @@ public class Attachment extends BasicPostingModel<User>{
 
     @Column(name = "length", nullable = false)
     private Long length;
+
+    public AttachmentDTO getDTO() throws IOException {
+        return AttachmentDTO.builder()
+                .createdById(getCreatedBy().getId())
+                .updatedById(getUpdatedBy().getId())
+                .createdAt(getCreatedAt())
+                .updatedAt(getUpdatedAt())
+                .fileName(fileName)
+                .length(length)
+                .bytes(new FileInputStream(path).readAllBytes())
+                .build();
+    }
 }

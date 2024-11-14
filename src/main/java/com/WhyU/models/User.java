@@ -1,5 +1,6 @@
 package com.WhyU.models;
 
+import com.WhyU.dto.UserDTO;
 import com.WhyU.models.enums.Sex;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -9,9 +10,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -22,18 +26,21 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder
-public class User extends BasicModel {
-    @Column(name = "username", columnDefinition = "varchar(60)", nullable = false)
+public class User extends BasicModel  {
+    @Column(name = "username", columnDefinition = "varchar(60)", nullable = false, unique = true)
     private String username;
 
     @Column(name = "password")
     private String password;
 
+    @Column(name = "roles")
+    private String roles;
+
     @Column(name = "reg_date")
     @CreationTimestamp
     private LocalDate regDate;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date", nullable = true)
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
@@ -51,10 +58,6 @@ public class User extends BasicModel {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Result> results;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<Role> roles;
-
-    @Transient
     private int getAge(){
         LocalDate currentDate = LocalDate.now();
         return Period.between(birthDate, currentDate).getYears();

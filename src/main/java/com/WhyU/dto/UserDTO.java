@@ -2,12 +2,8 @@ package com.WhyU.dto;
 
 import com.WhyU.models.Attachment;
 import com.WhyU.models.Result;
-import com.WhyU.models.Role;
 import com.WhyU.models.enums.Sex;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -27,8 +23,8 @@ public class UserDTO implements Serializable {
     protected String email;
 
     private Attachment profilePic;
-    private long profilePicAttachmentID;
+    private Long profilePicAttachmentID;
 
     private List<Result> results;
-    private List<Role> roles;
+    private String roles;
 }

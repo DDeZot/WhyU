@@ -10,8 +10,10 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.function.ServerRequest;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,7 +30,8 @@ public class StoryController {
 
     @PostMapping
     public ResponseEntity<Story> createStory(@RequestBody StoryDTO dto){
-            return ResponseEntity.ok().body(storyService.createStory(dto));
+
+        return ResponseEntity.ok().body(storyService.createStory(dto));
     }
 
     @PostMapping("/{id}/frames")
@@ -58,12 +61,12 @@ public class StoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Story> updateStory(@PathVariable Long id, @RequestBody StoryDTO dto){
-            return ResponseEntity.ok().body(storyService.updateStory(id, dto));
+        return ResponseEntity.ok().body(storyService.updateStory(id, dto));
     }
 
     @PatchMapping("/upload/{id}")
     public ResponseEntity<Story> addPreview(@PathVariable Long id, @RequestParam("file")MultipartFile file) throws IOException {
-            return ResponseEntity.ok().body(storyService.uploadImageToStory(id, file));
+        return ResponseEntity.ok().body(storyService.uploadImageToStory(id, file));
     }
 
     @DeleteMapping("/{id}")

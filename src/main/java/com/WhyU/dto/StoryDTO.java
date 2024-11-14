@@ -17,14 +17,17 @@ public class StoryDTO implements Serializable {
     private LocalDateTime updatedAt;
 
     private User createdBy;
-    private long createdByUserID;
+    private Long createdByUserID;
 
     private User updatedBy;
-    private long updatedByUserID;
+    private Long updatedByUserID;
 
     private String head;
     private String description;
 
+    private Long[] framesIds;
+
     private Attachment preview;
-    private long previewAttachmentID;
+    private byte[] previewBytes;
+    private Long previewAttachmentID;
 }

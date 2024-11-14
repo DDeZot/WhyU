@@ -14,9 +14,16 @@ import java.time.LocalDateTime;
 public class AttachmentDTO implements Serializable {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
     private User createdBy;
+    private Long createdById;
+
     private User updatedBy;
+    private Long updatedById;
+
+    private byte[] bytes;
+
     private String path;
     private String fileName;
-    private long length;
+    private Long length;
 }

@@ -14,8 +14,8 @@ public class ActionDTO implements Serializable {
     private String head;
 
     private Frame frame;
-    private long frameID;
+    private Long frameID;
 
     private Frame consequence;
-    private long consequenceFrameID;
+    private Long consequenceFrameID;
 }

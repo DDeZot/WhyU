@@ -1,5 +1,6 @@
 package com.WhyU.models;
 
+import com.WhyU.dto.ActionDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,4 +30,12 @@ public class Action extends BasicModel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "consequence_id", nullable = false)
     private Frame consequence;
+
+    public ActionDTO getDTO(){
+        return ActionDTO.builder()
+                .head(head)
+                .consequenceFrameID(consequence.getId())
+                .frameID(frame.getId())
+                .build();
+    }
 }

@@ -1,5 +1,6 @@
 package com.WhyU.models;
 
+import com.WhyU.dto.StoryDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +10,9 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 @Entity
@@ -37,5 +41,17 @@ public class Story extends BasicPostingModel<User> {
     @Deprecated
     public void addFrame(Frame frame){
         this.frames.add(frame);
+    }
+
+    public StoryDTO getDTO() throws IOException {
+        return StoryDTO.builder()
+                .createdByUserID(getCreatedBy().getId())
+                .updatedByUserID(getUpdatedBy().getId())
+                .previewBytes(new FileInputStream(preview.getPath()).readAllBytes())
+                .previewAttachmentID(preview.getId())
+                .framesIds((Long[]) frames.stream().map(BasicModel::getId).toArray())
+                .head(head)
+                .description(description)
+                .build();
     }
 }

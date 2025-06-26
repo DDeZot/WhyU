@@ -15,6 +15,7 @@ public interface StoryService {
     void deleteStoryById(Long id);
     Story findStoryById(Long id);
     Story findStoryByHead(String head);
+    Story findLatestStory();
     List<Story> findAllStories();
     Frame getFirstFrame(Long storyID);
     Frame addFrame(Long storyID, FrameDTO dto);

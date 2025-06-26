@@ -5,7 +5,6 @@ import com.WhyU.models.Attachment;
 import com.WhyU.models.MyUserDetails;
 import com.WhyU.models.User;
 import com.WhyU.repositories.UserRepository;
-import com.WhyU.security.MyPasswordEncoder;
 import com.WhyU.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -41,7 +41,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User findUserByUsername(String username) {
-        return null;
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с ником " + username + " не найден!"));
     }
 
     public List<User> findAllUsers() {
@@ -61,6 +62,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .build());
     }
 
+    @Transactional
     public User updateUser(Long id, UserDTO dto){
         User selectedUser = userRepository.findById(id).orElse(null);
 
@@ -85,6 +87,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.deleteById(id);
     }
 
+    @Transactional
     public User uploadProfilePic(Long id, MultipartFile image) throws IOException {
         if (id == null) {
             throw new IllegalArgumentException("ID не может быть null");

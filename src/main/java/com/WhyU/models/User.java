@@ -1,7 +1,6 @@
 package com.WhyU.models;
 
 import com.WhyU.dto.UserDTO;
-import com.WhyU.models.enums.Sex;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -10,12 +9,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -33,6 +31,9 @@ public class User extends BasicModel  {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "roles")
     private String roles;
 
@@ -42,10 +43,6 @@ public class User extends BasicModel  {
 
     @Column(name = "birth_date", nullable = true)
     private LocalDate birthDate;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "sex")
-    private Sex sex;
 
     @Email
     @Column(name = "email")
@@ -61,5 +58,28 @@ public class User extends BasicModel  {
     private int getAge(){
         LocalDate currentDate = LocalDate.now();
         return Period.between(birthDate, currentDate).getYears();
+    }
+
+    public UserDTO getDTO(){
+        byte[] bytes = null;
+
+        if(profilePic != null) {
+            try (FileInputStream file = new FileInputStream(profilePic.getPath())) {
+                bytes = file.readAllBytes();
+            } catch (IOException e) {
+                bytes = null;
+            }
+        }
+
+        return UserDTO.builder()
+                .id(id)
+                .username(username)
+                .regDate(regDate)
+                .email(email)
+                .profilePicName(profilePic == null ? null : profilePic.getFileName())
+                .resultsIds(results == null ? null : results.stream().map(BasicModel::getId).toList())
+                .name(name)
+                .roles(roles)
+                .build();
     }
 }

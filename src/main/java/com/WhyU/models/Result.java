@@ -1,7 +1,7 @@
 package com.WhyU.models;
 
 import com.WhyU.dto.ResultDTO;
-import com.WhyU.models.enums.EndingType;
+import com.WhyU.models.enums.FrameType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -31,20 +31,22 @@ public class Result extends BasicModel {
 
     @Enumerated
     @Column(name = "ending_type")
-    EndingType endingType;
+    FrameType frameType;
 
     public void setEnding(Frame endingFrame){
         this.ending = endingFrame;
-        this.endingType = endingFrame.getEndingType();
+        this.frameType = endingFrame.getFrameType();
     }
 
-    public ResultDTO getDto(){
+    public ResultDTO getDTO(){
         return ResultDTO.builder()
+                .id(id)
                 .userID(user.getId())
                 .endingFrameID(ending.getId())
                 .storyID(story.getId())
                 .endingFrameDescription(ending.getDescription())
-                .endingType(endingType)
+                .storyHead(story.getHead())
+                .frameType(frameType)
                 .build();
     }
 }

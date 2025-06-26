@@ -1,6 +1,7 @@
 package com.WhyU.controllers;
 
 import com.WhyU.dto.TelegramUserDTO;
+import com.WhyU.dto.UserDTO;
 import com.WhyU.models.TelegramUser;
 import com.WhyU.models.User;
 import com.WhyU.services.impl.TelegramUserServiceImpl;
@@ -23,23 +24,28 @@ public class TelegramUserController {
     }
 
     @GetMapping()
-    public List<TelegramUser> findAllTelegramUsers(){
-        return telegramUserService.findAllTelegramUsers();
+    public ResponseEntity<List<TelegramUserDTO>> findAllTelegramUsers(){
+        return ResponseEntity.ok().body(telegramUserService.findAllTelegramUsers().stream().map(TelegramUser::getDTO).toList());
     }
 
     @GetMapping("/{id}/user")
-    public ResponseEntity<User> getUserByTgId(@PathVariable Long id){
-        return ResponseEntity.ok().body(telegramUserService.getUserByTgId(id));
+    public ResponseEntity<UserDTO> getUserByTgId(@PathVariable Long id) throws EntityNotFoundException{
+        return ResponseEntity.ok().body(telegramUserService.getUserByTgId(id).getDTO());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TelegramUser> findTelegramUserByTgId(@PathVariable Long id){
-        return ResponseEntity.ok().body(telegramUserService.findTelegramUserByTgId(id));
+    public ResponseEntity<TelegramUserDTO> findTelegramUserByTgId(@PathVariable Long id) throws EntityNotFoundException{
+        return ResponseEntity.ok().body(telegramUserService.findTelegramUserByTgId(id).getDTO());
     }
 
     @PostMapping
-    private ResponseEntity<TelegramUser> createTelegramUser(@RequestBody TelegramUserDTO dto){
-        return ResponseEntity.ok().body(telegramUserService.createTelegramUser(dto));
+    public ResponseEntity<TelegramUserDTO> createTelegramUser(@RequestBody TelegramUserDTO dto) throws  EntityNotFoundException{
+        return ResponseEntity.ok().body(telegramUserService.createTelegramUser(dto).getDTO());
+    }
+
+    @PatchMapping("{tgID}/username")
+    public ResponseEntity<TelegramUserDTO> changeUsername(@PathVariable Long tgID, @RequestBody UserDTO user) throws EntityNotFoundException{
+        return ResponseEntity.ok().body(telegramUserService.changeUsername(tgID, user).getDTO());
     }
 
     @DeleteMapping("/{id}")

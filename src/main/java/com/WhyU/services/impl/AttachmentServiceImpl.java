@@ -5,6 +5,7 @@ import com.WhyU.repositories.AttachmentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Service
 public class AttachmentServiceImpl {
-    private final String ATTACHMENT_DIRECTORY = "src/main/resources/uploads";
+    private final String ATTACHMENT_DIRECTORY = "src/main/resources/static/uploads";
     private final AttachmentRepository attachmentRepository;
 
     @Autowired
@@ -30,6 +31,7 @@ public class AttachmentServiceImpl {
                 .orElseThrow(() -> new EntityNotFoundException("Вложение с ID " + id + " не найдено"));
     }
 
+    @Transactional
     public Attachment createAttachment(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new IOException("Файл пустой!");

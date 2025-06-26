@@ -3,6 +3,7 @@ package com.WhyU.controllers;
 import com.WhyU.dto.ResultDTO;
 import com.WhyU.models.Result;
 import com.WhyU.services.impl.ResultServiceImpl;
+import com.WhyU.services.impl.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,41 +19,51 @@ import java.util.List;
 @RequestMapping("api/results")
 public class ResultController {
     private final ResultServiceImpl resultService;
+    private final UserServiceImpl userService;
 
     @Autowired
-    public ResultController(ResultServiceImpl resultService) {
+    public ResultController(ResultServiceImpl resultService, UserServiceImpl userService) {
         this.resultService = resultService;
+        this.userService = userService;
     }
 
     @GetMapping
-    public List<Result> findAllResults(){
-        return resultService.findAllResults();
+    public ResponseEntity<List<ResultDTO>> findAllResults(){
+        return ResponseEntity.ok().body(resultService.findAllResults().stream().map(Result::getDTO).toList());
     }
 
     @GetMapping("/by_user/{userID}")
-    public ResponseEntity<List<Result>> findAllResultsByUserId(@PathVariable Long userID){
-        if(!resultService.findResultById(userID).getUser().getUsername().equals(getCurrentUser()))
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+    public ResponseEntity<List<ResultDTO>> findAllResultsByUserId(@PathVariable Long userID){
+        if(!userService.findUserById(userID).getUsername().equals(getCurrentUser()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
-        return ResponseEntity.ok().body(resultService.findAllResultsByUserId(userID));
+        return ResponseEntity.ok().body(resultService.findAllResultsByUserId(userID).stream().map(Result::getDTO).toList());
+    }
+
+    @GetMapping("by_story/{storyID}")
+    public ResponseEntity<List<ResultDTO>> findResultsByStoryId(@PathVariable Long storyID){
+        return ResponseEntity.ok().body(resultService.findAllResultsByStoryId(storyID).stream().map(Result::getDTO).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Result> findResultById(@PathVariable Long id){
-        return ResponseEntity.ok().body(resultService.findResultById(id));
+    public ResponseEntity<ResultDTO> findResultById(@PathVariable Long id){
+        if(!resultService.findResultById(id).getUser().getUsername().equals(getCurrentUser()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+
+        return ResponseEntity.ok().body(resultService.findResultById(id).getDTO());
     }
 
     @PostMapping
-    public ResponseEntity<Result> createResult(@RequestBody ResultDTO dto){
-        return ResponseEntity.ok().body(resultService.createResult(dto));
+    public ResponseEntity<ResultDTO> createResult(@RequestBody ResultDTO dto){
+        return ResponseEntity.ok().body(resultService.createResult(dto).getDTO());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Result> updateResult(@PathVariable Long id, @RequestBody ResultDTO dto, HttpServletRequest request){
+    public ResponseEntity<ResultDTO> updateResult(@PathVariable Long id, @RequestBody ResultDTO dto, HttpServletRequest request){
         if(!resultService.findResultById(id).getUser().getUsername().equals(getCurrentUser()))
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
-        return ResponseEntity.ok().body(resultService.updateResult(id, dto));
+        return ResponseEntity.ok().body(resultService.updateResult(id, dto).getDTO());
     }
 
     private String getCurrentUser() {

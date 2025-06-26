@@ -34,14 +34,24 @@ public class Attachment extends BasicPostingModel<User>{
     private Long length;
 
     public AttachmentDTO getDTO() throws IOException {
+        byte[] bytes = null;
+
+        try(FileInputStream file = new FileInputStream(path)){
+            bytes = file.readAllBytes();
+        } catch (IOException e){
+            bytes = null;
+        }
         return AttachmentDTO.builder()
-                .createdById(getCreatedBy().getId())
-                .updatedById(getUpdatedBy().getId())
+                .id(id)
+                .createdById(getCreatedBy() == null ? null : getCreatedBy().getId())
+                .createdByName(getUpdatedBy() == null ? null : getCreatedBy().getUsername())
+                .updatedById(getUpdatedBy() == null ? null : getUpdatedBy().getId())
+                .updatedByName(getUpdatedBy() == null ? null : getUpdatedBy().getUsername())
                 .createdAt(getCreatedAt())
                 .updatedAt(getUpdatedAt())
                 .fileName(fileName)
                 .length(length)
-                .bytes(new FileInputStream(path).readAllBytes())
+                .bytes(bytes)
                 .build();
     }
 }

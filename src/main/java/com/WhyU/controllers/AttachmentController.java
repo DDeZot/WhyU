@@ -2,11 +2,13 @@ package com.WhyU.controllers;
 
 import com.WhyU.models.Attachment;
 import com.WhyU.services.impl.AttachmentServiceImpl;
+import com.WhyU.services.impl.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,15 +19,19 @@ import java.util.List;
 @RequestMapping("api/attachments")
 public class AttachmentController {
     private final AttachmentServiceImpl attachmentService;
+    private final UserServiceImpl userServiceImpl;
 
     @Autowired
-    public AttachmentController(AttachmentServiceImpl attachmentService){
+    public AttachmentController(AttachmentServiceImpl attachmentService, UserServiceImpl userServiceImpl){
         this.attachmentService = attachmentService;
+        this.userServiceImpl = userServiceImpl;
     }
 
     @PostMapping
     public ResponseEntity<Attachment> createAttachment(@RequestParam("file") MultipartFile file) throws IOException {
-        return ResponseEntity.ok(attachmentService.createAttachment(file));
+        Attachment attachment = attachmentService.createAttachment(file);
+        attachment.setCreatedBy(userServiceImpl.findUserByUsername(getCurrentUser()));
+        return ResponseEntity.ok(attachment);
     }
 
     @GetMapping("/{id}")
@@ -42,6 +48,13 @@ public class AttachmentController {
     @GetMapping()
     public ResponseEntity<List<Attachment>> findAllAttachments(){
         return ResponseEntity.status(HttpStatus.OK).body(attachmentService.findAllAttachments());
+    }
+
+    private String getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (authentication != null && authentication.isAuthenticated())
+                ? authentication.getName()
+                : null;
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

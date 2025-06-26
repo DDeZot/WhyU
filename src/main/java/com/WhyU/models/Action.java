@@ -33,6 +33,7 @@ public class Action extends BasicModel {
 
     public ActionDTO getDTO(){
         return ActionDTO.builder()
+                .id(id)
                 .head(head)
                 .consequenceFrameID(consequence.getId())
                 .frameID(frame.getId())

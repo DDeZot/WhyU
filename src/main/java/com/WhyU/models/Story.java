@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "stories")
@@ -43,13 +44,26 @@ public class Story extends BasicPostingModel<User> {
         this.frames.add(frame);
     }
 
-    public StoryDTO getDTO() throws IOException {
+    public StoryDTO getDTO() {
+        byte[] bytes = null;
+
+        if (preview != null){
+            try (FileInputStream file = new FileInputStream(preview.getPath())) {
+                bytes = file.readAllBytes();
+            } catch (IOException e) {
+                bytes = null;
+            }
+        }
+
         return StoryDTO.builder()
-                .createdByUserID(getCreatedBy().getId())
-                .updatedByUserID(getUpdatedBy().getId())
-                .previewBytes(new FileInputStream(preview.getPath()).readAllBytes())
-                .previewAttachmentID(preview.getId())
-                .framesIds((Long[]) frames.stream().map(BasicModel::getId).toArray())
+                .id(id)
+                .createdByUserID(getCreatedBy() == null ? null : getCreatedBy().getId())
+                .updatedByUserID(getUpdatedBy() == null ? null : getUpdatedBy().getId())
+                .createdByName(getCreatedBy() == null ? null : getCreatedBy().getUsername())
+                .updatedByName(getUpdatedBy() == null ? null : getUpdatedBy().getUsername())
+                .previewAttachmentID(preview == null ? null : preview.getId())
+                .previewName(preview == null ? null : preview.getFileName())
+                .framesIds(frames == null ? null : frames.stream().map(BasicModel::getId).collect(Collectors.toList()))
                 .head(head)
                 .description(description)
                 .build();

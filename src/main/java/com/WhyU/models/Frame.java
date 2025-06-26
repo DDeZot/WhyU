@@ -1,7 +1,7 @@
 package com.WhyU.models;
 
 import com.WhyU.dto.FrameDTO;
-import com.WhyU.models.enums.EndingType;
+import com.WhyU.models.enums.FrameType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,9 +12,9 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "frames")
@@ -48,29 +48,37 @@ public class Frame extends BasicModel {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "consequence")
     private List<Action> gates;
 
-    @Column(name = "ending")
-    private Boolean ending = false;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "ending_type")
-    private EndingType endingType = null;
+    @Column(name = "frame_type")
+    private FrameType frameType = FrameType.STANDARD;
 
     @Deprecated
     public void addAction(Action action){
         this.actions.add(action);
     }
 
-    public FrameDTO getDTO() throws IOException {
+    public FrameDTO getDTO() {
+        byte[] bytes = null;
+
+        if(attachment != null) {
+            try (FileInputStream file = new FileInputStream(attachment.getPath())) {
+                bytes = file.readAllBytes();
+            } catch (IOException e) {
+                bytes = null;
+            }
+        }
+
         return FrameDTO.builder()
+                .id(id)
                 .storyID(story.getId())
-                .attachmentBytes(new FileInputStream(attachment.getPath()).readAllBytes())
-                .attachmentID(attachment.getId())
-                .ending(ending)
-                .actionsIds((Long[]) actions.stream().map(BasicModel::getId).toArray())
-                .gatesIds((Long[]) gates.stream().map(BasicModel::getId).toArray())
+                .attachmentName(attachment == null ? null : attachment.getFileName())
+                .attachmentID(attachment == null ? null : attachment.getId())
+                .actionsIds(actions == null ? null : actions.stream().map(BasicModel::getId).collect(Collectors.toList()))
+                .actionsHeads(actions == null ? null : actions.stream().map(Action::getHead).toList())
+                .gatesIds(gates == null ? null : gates.stream().map(BasicModel::getId).toList())
                 .head(head)
                 .description(description)
-                .endingType(endingType)
+                .frameType(frameType)
                 .build();
     }
 }

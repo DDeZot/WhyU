@@ -3,7 +3,7 @@ package com.WhyU.dto;
 import com.WhyU.models.Frame;
 import com.WhyU.models.Story;
 import com.WhyU.models.User;
-import com.WhyU.models.enums.EndingType;
+import com.WhyU.models.enums.FrameType;
 import lombok.*;
 
 import java.io.Serializable;
@@ -14,6 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class ResultDTO implements Serializable {
+    private Long id;
     private User user;
     private Long userID;
 
@@ -24,6 +25,7 @@ public class ResultDTO implements Serializable {
     private Long storyID;
 
     private String endingFrameDescription;
+    private String storyHead;
 
-    private EndingType endingType;
+    private FrameType frameType;
 }

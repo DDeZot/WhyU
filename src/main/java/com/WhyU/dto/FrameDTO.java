@@ -3,7 +3,7 @@ package com.WhyU.dto;
 import com.WhyU.models.Action;
 import com.WhyU.models.Attachment;
 import com.WhyU.models.Story;
-import com.WhyU.models.enums.EndingType;
+import com.WhyU.models.enums.FrameType;
 import lombok.*;
 
 import java.io.Serializable;
@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class FrameDTO implements Serializable {
+    private Long id;
     private String head;
     private String description;
 
@@ -23,13 +24,13 @@ public class FrameDTO implements Serializable {
 
     private Attachment attachment;
     private Long attachmentID;
-    private byte[] attachmentBytes;
+    private String attachmentName;
 
-    //private List<Action> actions;
-    private Long[] actionsIds;
-    //private List<Action> gates;
-    private Long[] gatesIds;
+    private List<Action> actions;
+    private List<Long> actionsIds;
+    private List<String> actionsHeads;
+    private List<Action> gates;
+    private List<Long> gatesIds;
 
-    private Boolean ending = false;
-    private EndingType endingType = null;
+    private FrameType frameType = null;
 }

@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,21 +14,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class StoryDTO implements Serializable {
+    private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     private User createdBy;
+    private String createdByName;
     private Long createdByUserID;
 
     private User updatedBy;
+    private String updatedByName;
     private Long updatedByUserID;
 
     private String head;
     private String description;
 
-    private Long[] framesIds;
+    private List<Long> framesIds;
 
     private Attachment preview;
-    private byte[] previewBytes;
+    private String previewName;
+
     private Long previewAttachmentID;
 }

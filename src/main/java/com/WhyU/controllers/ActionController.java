@@ -1,16 +1,14 @@
 package com.WhyU.controllers;
 
 import com.WhyU.dto.ActionDTO;
+import com.WhyU.dto.FrameDTO;
 import com.WhyU.models.Action;
-import com.WhyU.models.Frame;
 import com.WhyU.services.impl.ActionServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,34 +22,34 @@ public class ActionController {
     }
 
     @PostMapping("/add_to_frame/{frameID}")
-    public ResponseEntity<Action> createAction(@PathVariable Long frameID, @RequestBody ActionDTO dto) throws EntityNotFoundException {
-        return ResponseEntity.ok().body(actionService.createAction(dto, frameID));
+    public ResponseEntity<ActionDTO> createAction(@PathVariable Long frameID, @RequestBody ActionDTO dto) throws EntityNotFoundException {
+        return ResponseEntity.ok().body(actionService.createAction(dto, frameID).getDTO());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Action> findActionById(@PathVariable Long id) throws  EntityNotFoundException {
+    public ResponseEntity<ActionDTO> findActionById(@PathVariable Long id) throws  EntityNotFoundException {
         try {
-            return ResponseEntity.ok().body(actionService.findActionById(id));
+            return ResponseEntity.ok().body(actionService.findActionById(id).getDTO());
         } catch (EntityNotFoundException e){
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/by_consequence_id/{consequenceID}")
-    public List<Action> findActionsByConsequenceId(@PathVariable Long consequenceID) throws EntityNotFoundException {
-        return actionService.findAllActionsByConsequenceId(consequenceID);
+    public ResponseEntity<List<ActionDTO>> findActionsByConsequenceId(@PathVariable Long consequenceID) throws EntityNotFoundException {
+        return ResponseEntity.ok().body(actionService.findAllActionsByConsequenceId(consequenceID).stream().map(Action::getDTO).toList());
     }
 
 
     @GetMapping("/{id}/consequence")
-    public ResponseEntity<Frame> getConsequence(@PathVariable Long id) throws EntityNotFoundException {
-        return ResponseEntity.ok().body(actionService.getConsequence(id));
+    public ResponseEntity<FrameDTO> getConsequence(@PathVariable Long id) throws EntityNotFoundException {
+        return ResponseEntity.ok().body(actionService.getConsequence(id).getDTO());
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Action> updateAction(@PathVariable Long id, @RequestBody ActionDTO dto) throws EntityNotFoundException {
-        return ResponseEntity.ok().body(actionService.updateAction(id, dto));
+    public ResponseEntity<ActionDTO> updateAction(@PathVariable Long id, @RequestBody ActionDTO dto) throws EntityNotFoundException {
+        return ResponseEntity.ok().body(actionService.updateAction(id, dto).getDTO());
     }
 
     @DeleteMapping("/{id}")

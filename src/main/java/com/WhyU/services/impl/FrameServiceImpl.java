@@ -6,7 +6,7 @@ import com.WhyU.models.Action;
 import com.WhyU.models.Attachment;
 import com.WhyU.models.Frame;
 import com.WhyU.models.Story;
-import com.WhyU.models.enums.EndingType;
+import com.WhyU.models.enums.FrameType;
 import com.WhyU.repositories.ActionRepository;
 import com.WhyU.repositories.FrameRepository;
 import com.WhyU.repositories.StoryRepository;
@@ -14,6 +14,7 @@ import com.WhyU.services.FrameService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ public class FrameServiceImpl implements FrameService {
         this.storyService = storyService;
     }
 
+    @Transactional
     public Frame createFrame(FrameDTO dto, Long storyID){
         Story story = storyRepository.findById(storyID)
                 .orElseThrow(() -> new EntityNotFoundException("История с ID " + storyID + " не найдена"));
@@ -60,6 +62,7 @@ public class FrameServiceImpl implements FrameService {
         return frameRepository.findAll();
     }
 
+    @Transactional
     public Frame createFrame(FrameDTO dto, String storyName) {
         Story story = storyService.findStoryByHead(storyName);
 
@@ -76,18 +79,22 @@ public class FrameServiceImpl implements FrameService {
         frameRepository.deleteById(id);
     }
 
+    @Transactional
     public Action addAction(Long frameID, ActionDTO dto) {
         Frame frame = findFrameById(frameID);
 
-        frame.setEnding(false);
-        frame.setEndingType(null);
+        frame.setFrameType(FrameType.STANDARD);
 
         Action action = Action.builder()
                 .frame(frame)
                 .head(dto.getHead())
                 .build();
 
-        Frame consequence = Frame.builder().story(frame.getStory()).build();
+        Frame consequence = Frame.builder()
+                .story(frame.getStory())
+                .frameType(FrameType.STANDARD)
+                .build();
+
         frameRepository.save(consequence);
 
         action.setConsequence(consequence);
@@ -99,6 +106,7 @@ public class FrameServiceImpl implements FrameService {
         return actionRepository.save(action);
     }
 
+    @Transactional
     public Frame updateFrame(Long id, FrameDTO dto){
         Frame frame = findFrameById(id);
 
@@ -111,6 +119,9 @@ public class FrameServiceImpl implements FrameService {
         if(dto.getAttachment() != null)
             frame.setAttachment(dto.getAttachment());
 
+        if(dto.getFrameType() != null)
+            frame.setFrameType(dto.getFrameType());
+
         Story story = frame.getStory();
         story.setUpdatedAt(LocalDateTime.now());
 
@@ -119,10 +130,10 @@ public class FrameServiceImpl implements FrameService {
         return frameRepository.save(frame);
     }
 
-    public Frame setEnding(Long id, EndingType endingType) {
+    public Frame setEnding(Long id, FrameType frameType) {
         Frame frame = findFrameById(id);
 
-        frame.setEndingType(endingType);
+        frame.setFrameType(frameType);
         return frameRepository.save(frame);
     }
 
@@ -132,6 +143,7 @@ public class FrameServiceImpl implements FrameService {
         return frame.getActions();
     }
 
+    @Transactional
     public Frame uploadImageToFrame(Long id, MultipartFile image) throws IOException {
         if (id == null) {
             throw new IllegalArgumentException("ID не может быть null");

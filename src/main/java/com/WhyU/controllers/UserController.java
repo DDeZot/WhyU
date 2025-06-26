@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findUserById(Long id) throws EntityNotFoundException {
+    public ResponseEntity<User> findUserById(@PathVariable Long id) throws EntityNotFoundException {
         return ResponseEntity.ok().body(userService.findUserById(id));
     }
 
@@ -78,7 +78,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
-    @ExceptionHandler(IOException.class)
+    @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<String> handleNotFound(UsernameNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }

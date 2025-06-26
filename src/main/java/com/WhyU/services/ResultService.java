@@ -2,7 +2,6 @@ package com.WhyU.services;
 
 import com.WhyU.dto.ResultDTO;
 import com.WhyU.models.Result;
-import com.WhyU.models.enums.EndingType;
 
 import java.util.List;
 
